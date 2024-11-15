@@ -149,4 +149,27 @@ describe('findPackageJSON', () => { // Throws when no arguments are provided
       });
     }));
   });
+
+  it('should be able to resolve with non-ascii characters', () => {
+    tmpdir.refresh();
+    fs.mkdirSync(tmpdir.resolve('非ascii'), { recursive: true });
+    fs.writeFileSync(
+      tmpdir.resolve('非ascii/index.js'),
+      `
+      import { findPackageJSON } from 'node:module';
+      import fs from 'node:fs';
+      console.log("ok");
+      `
+    );
+
+    fs.writeFileSync(
+      tmpdir.resolve('非ascii/package.json'),
+      JSON.stringify({
+        name: 'pkg',
+      }),
+    );
+common.spawnPromisified(process.execPath, [tmpdir.resolve('非ascii/index.js')]).then(common.mustCall((result) => {
+      assert.strictEqual(result.stdout, "ok\n");
+    }));
+  });
 });
