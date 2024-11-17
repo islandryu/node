@@ -1019,18 +1019,27 @@ v8::Maybe<int> GetValidFileMode(Environment* env,
 inline bool IsWindowsBatchFile(const char* filename);
 
 #ifdef _WIN32
-std::wstring ConvertToWideString(const std::string_view& str);
+std::wstring ConvertToWideString(const std::string_view str);
 
-inline std::filesystem::path BufferValueToPath(BufferValue  str);
+inline std::filesystem::path StringViewToPath(
+    std::string_view str) {
+  return std::filesystem::path(ConvertToWideString(str));
+}
 
 std::string ConvertWideToUTF8(const std::wstring& wstr);
 
-inline std::string PathToString(std::filesystem::path path);
+inline std::string PathToString(std::filesystem::path path) {
+  return ConvertWideToUTF8(path.wstring());
+}
 
 #else  // _WIN32
 
-inline std::filesystem::path BufferValueToPath(BufferValue str);
-inline std::string PathToString(std::filesystem::path path);
+inline std::filesystem::path StringViewToPath(std::string_view str) {
+  return std::filesystem::path(str);
+}
+inline std::string PathToString(std::filesystem::path path) {
+  return path.native();
+}
 
 #endif  // _WIN32
 

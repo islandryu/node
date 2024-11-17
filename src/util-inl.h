@@ -556,26 +556,6 @@ bool IsWindowsBatchFile(const char* filename) {
   return false;
 #endif  // _WIN32
 }
-
-#ifdef _WIN32
-std::filesystem::path BufferValueToPath(BufferValue str) {
-  return std::filesystem::path(ConvertToWideString(str.ToStringView()));
-
-std::string PathToString(std::filesystem::path path) {
-  return ConvertWideToUTF8(path.wstring());
-}
-
-#else // _WIN32
-std::filesystem::path BufferValueToPath(BufferValue str) {
-  return std::filesystem::path(str.ToStringView());
-}
-
-std::string PathToString(std::filesystem::path path) {
-  return path.native();
-}
-
-#endif  // _WIN32
-
 }  // namespace node
 
 #endif  // defined(NODE_WANT_INTERNALS) && NODE_WANT_INTERNALS
